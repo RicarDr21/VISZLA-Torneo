@@ -1,0 +1,13 @@
+﻿node_modules/
+npm-debug.log*
+yarn-error.log*
+package-lock.json
+
+.env
+.env.local
+
+src/public/uploads/
+
+coverage/
+dist/
+.DS_Store

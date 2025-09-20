@@ -1,0 +1,7 @@
+﻿hp
+censurado
+noapropiado
+insulto
+grosero
+vulgar
+blasfemia
