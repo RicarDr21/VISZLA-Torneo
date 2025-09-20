@@ -1,5 +1,61 @@
-﻿hp
+﻿# Términos prohibidos (uno por línea). Comparación sin tildes, minúsculas e ignora separadores.
+
+# genéricos
+ofensivo
+insulto
+grosero
+vulgar
+blasfemia
+obsceno
+inapropiado
 censurado
+nsfw
+
+# sexuales / +18
+sexo
+sexual
+porn
+porno
+pornografia
+xxx
+
+# violencia/drogas (ajusta según políticas internas)
+violento
+gore
+sangriento
+drogas
+droga
+marihuana
+cannabis
+
+# groserías comunes (ES/LA)
+mierda
+joder
+carajo
+coño
+estupido
+idiota
+imbecil
+tonto
+cabron
+pendejo
+gilipollas
+culero
+maldito
+maldicion
+
+# variantes comunes / leetspeak
+p0rn
+p0rno
+p0rnografia
+s3xo
+vulg4r
+idi0ta
+imb3cil
+m13rda
+
+# placeholders previos (conservados)
+hp
 noapropiado
 insulto
 grosero
