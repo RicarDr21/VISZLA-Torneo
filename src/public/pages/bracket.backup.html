@@ -1,0 +1,18 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Torneo · US-13 · Árbol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style> :root{ --bg:#0f172a; --card:#111827; --muted:#94a3b8; --fg:#e5e7eb; --brand:#3b82f6; --ok:#22c55e; --warn:#f97316; --border:#1f2937; } *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui;background:var(--bg);color:var(--fg)} header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--border)} header h1{margin:0;font-size:18px;font-weight:600} .hint{color:var(--muted);font-size:12px} main{max-width:1200px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:1fr 1fr;gap:16px} .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;min-height:420px} .panel h2{margin:0 0 12px 0;font-size:16px} .rounds{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:12px} .round{border:1px dashed var(--border);border-radius:10px;padding:10px} .round h3{margin:0 0 8px 0;font-size:14px;color:var(--muted)} .match{border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin:8px 0;background:#0b1220} .team{display:flex;justify-content:space-between;gap:8px} .you{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.4)} .done{opacity:.8} .badge{font-size:11px;color:#cbd5e1;border:1px solid var(--border);padding:2px 6px;border-radius:99px} .toolbar{display:flex;gap:8px;align-items:center} input,select,button{background:#0b1220;color:var(--fg);border:1px solid var(--border);padding:8px 10px;border-radius:10px} button.brand{background:var(--brand);border-color:var(--brand)} .next{margin-top:8px;font-size:13px;color:var(--muted)} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} .gf .match{border-color:var(--brand)}
+</style>
+</head>
+<body>
+<header> <h1>🏆 Torneo · US-13 · Árbol</h1> <div class="toolbar"> <label class="hint">ID torneo:</label> <input id="tid" value="sample" style="width:140px"/> <label class="hint">Mi equipo:</label> <input id="myteam" placeholder="Ej. Viszla Phoenix" style="width:220px"/> <button id="load" class="brand">Cargar</button> </div>
+</header> <main> <section class="panel"> <h2>Cuadro de ganadores</h2> <div class="rounds" id="winners"></div> </section> <section class="panel"> <h2>Cuadro de perdedores</h2> <div class="rounds" id="losers"></div> </section> <section class="panel gf grid2" style="grid-column:1 / span 2"> <div> <h2>Gran final</h2> <div id="gf"></div> </div> <div> <h2>Siguiente enfrentamiento de mi equipo</h2> <div id="next" class="next">—</div> </div> </section>
+</main> <script src="/js/bracket.js"></script>
+</body>
+</html> 

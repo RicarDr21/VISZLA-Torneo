@@ -1,0 +1,7 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head> <meta charset="UTF-8"/> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <title>Torneo · Árbol</title> <link rel="stylesheet" href="/css/bracket.css?v=2"/> <style> body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial} </style>
+</head>
+<body class="page"> <div class="topbar"> <h1>🏆 Torneo · Árbol</h1> <div class="spacer"></div> <div class="ctrls"> <label for="tid" style="opacity:.75">ID torneo:</label> <input id="tid" placeholder="demo"/> <label for="myteam" style="opacity:.75">Mi equipo:</label> <input id="myteam" placeholder="Viszla Phoenix"/> <button id="load">Cargar</button> </div> </div> <div class="grid-v2"> <section class="panel panel-left"> <h2>Cuadro de ganadores</h2> <div class="rounds" id="winners"> <svg class="svg-layer" id="svg-winners"></svg> </div> </section> <aside class="right-col"> <section class="panel"> <h2>Gran final</h2> <div id="gf" class="rounds"> <svg class="svg-layer" id="svg-gf"></svg> </div> </section> <section class="panel"> <h2>Siguiente enfrentamiento de mi equipo</h2> <div id="next" class="next">—</div> </section> </aside> </div> <script src="/js/bracket.js" defer></script>
+</body>
+</html> 

@@ -1,0 +1,47 @@
+﻿:root{
+  --bg:#0b1420; --panel:#0e1822; --ink:#d6e7ff;
+  --muted:#97b5d6; --line:#213244; --line2:#2c425a; --you:#2b7bff; --win:#22c55e;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.35 system-ui,Segoe UI,Roboto,Helvetica,Arial}
+
+.topbar{max-width:1280px;margin:18px auto 8px;padding:0 16px;display:flex;align-items:center;gap:16px}
+.topbar h1{margin:0;font-size:28px}
+.controls{margin-left:auto;display:flex;gap:10px;align-items:center}
+.controls label{display:flex;gap:8px;align-items:center;color:var(--muted)}
+.controls input{background:#0b1018;border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px 10px;min-width:160px}
+.controls button{background:#3b82f6;border:0;border-radius:10px;color:white;padding:8px 14px;font-weight:600;cursor:pointer}
+.controls button:hover{filter:brightness(1.05)}
+
+.bracket-wrap{max-width:1280px;margin:8px auto 0; padding:0 16px; position:relative}
+.bracket-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;align-items:start}
+.round>h3{margin:0 0 8px;font-size:18px;color:#cfe6ff;opacity:.9}
+
+.col{display:flex;flex-direction:column;gap:14px}
+
+.match{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px 16px;
+  min-height:84px;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow: inset 0 1px 0 #152231;
+}
+.match:hover{border-color:var(--line2)}
+.match.you{outline:2px solid var(--you);outline-offset:2px}
+.match.done{border-color:#2a3c50;background:#0c141c}
+
+.team{display:flex;align-items:center;gap:10px;font-size:16px;color:var(--ink)}
+.badge{width:28px;height:28px;border-radius:8px;border:1px solid #2a3c50;display:grid;place-items:center;font-weight:700;color:#cfe2ff}
+.match.pending .badge{opacity:.55}
+
+svg#br-arrows{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.connector-arrow{fill:none;stroke:#3a586f;stroke-width:2;opacity:.75}
+
+.legend{max-width:1280px;margin:10px auto 30px;padding:0 16px;font-size:14px;color:#bcd2ea;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.legend .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
+.dot-you{background:var(--you)} .dot-win{background:var(--win)} .dot-pending{background:#293949}
+.legend .flow{opacity:.85}
+.legend .next{margin-left:auto;color:#dcecff}

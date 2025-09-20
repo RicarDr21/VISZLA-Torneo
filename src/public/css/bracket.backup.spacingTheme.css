@@ -1,0 +1,49 @@
+﻿:root{
+  --bg:#0e1424; --panel:#0b1220; --ink:#dfe7ff; --muted:#9fb0d0;
+  --box:#0f1a30; --line:#3a4b6e; --line-hi:#76a0ff;
+  --me:#5ea1ff; --win:#10b981; --pend:#a0b4d7; --stroke:#1e2b46;
+}
+*{box-sizing:border-box}
+body.page-classic{margin:0; background:var(--bg); color:var(--ink)}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--stroke)}
+.bar h1{margin:0;font-size:18px}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.controls input{background:#0b1427;border:1px solid var(--stroke);color:var(--ink);padding:6px 10px;border-radius:10px;width:170px}
+.controls button{background:#2f63ff;border:1px solid #234bd6;color:#fff;padding:7px 12px;border-radius:10px;font-weight:700;cursor:pointer}
+.switch{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px}
+
+.classic{padding:14px 18px}
+.rounds{
+  position:relative; overflow:auto; padding:12px; border:1px solid var(--stroke); border-radius:12px; background:var(--panel);
+  min-height:360px;
+  /* layout de columnas */
+  display:flex; gap:28px;
+}
+.round{min-width:240px}
+.rtitle{font-size:12px; color:var(--muted); margin:0 0 8px 4px}
+.match{
+  background:var(--box); border:1px solid var(--stroke); border-radius:10px; padding:8px 10px; margin-bottom:14px;
+}
+.match.you{ outline:2px solid var(--me) }
+.row{display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:14px}
+.row span.name{white-space:pre-wrap}
+.badge{min-width:26px;height:22px;border-radius:8px;padding:0 8px;display:flex;align-items:center;justify-content:center;border:1px solid var(--stroke);background:#0a162c}
+.row.win .badge{border-color:#216b51;background:rgba(16,185,129,.14); color:#c7ffe9}
+.row.pend .badge{border-color:#2a3957; color:#dfe7ff}
+.sep{height:6px}
+
+/* SVG connectors */
+.svg{position:absolute; inset:0; pointer-events:none}
+.connector{fill:none; stroke:var(--line); stroke-width:2; stroke-linecap:round}
+.connector.emph{stroke:var(--line-hi); stroke-width:3}
+
+/* leyenda */
+.legendbar{display:flex; align-items:center; justify-content:space-between; padding:10px 18px; border-top:1px solid var(--stroke); color:var(--muted)}
+.legend{display:flex; align-items:center; gap:14px}
+.dot{width:12px;height:12px;border-radius:999px;display:inline-block; border:2px solid transparent}
+.dot.me{background:#17325c;border-color:var(--me)}
+.dot.win{background:#154635;border-color:#20c08c}
+.dot.pend{background:#1a2542;border-color:#2a3957}
+.arrow{display:inline-block; width:36px; height:0; border-top:2px solid var(--line); position:relative}
+.arrow:after{content:""; position:absolute; right:-2px; top:-4px; border-left:6px solid var(--line); border-top:4px solid transparent; border-bottom:4px solid transparent}
+.next{color:var(--ink)}

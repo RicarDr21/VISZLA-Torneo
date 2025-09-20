@@ -1,0 +1,40 @@
+﻿:root{
+  --bg:#0f172a; --panel:#0e1628; --muted:#8aa0bf; --line:#2a3b5f;
+  --accent:#60a5fa; --win:#10b981; --lose:#ef4444; --card:#0b1221; --border:#20314f;
+  --chip:#1b2742;
+}
+*{box-sizing:border-box}
+body.page{margin:0; padding:20px 28px; color:#dbeafe; background:var(--bg); min-height:100vh; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial}
+.topbar{display:flex; align-items:center; gap:14px; margin:0 0 16px}
+.topbar h1{font-size:20px;font-weight:700;margin:0}
+.topbar .spacer{flex:1}
+.topbar .ctrls{display:flex; gap:8px; align-items:center; opacity:.95}
+.topbar input{background:#0b1221;border:1px solid var(--border);color:#e5eefc;padding:6px 10px;border-radius:10px;outline:none; width:190px}
+.topbar button{background:#2563eb; border:0; color:#fff; padding:8px 14px; border-radius:12px; font-weight:600; cursor:pointer}
+.grid{display:grid; grid-template-columns: 1.3fr .9fr; gap:20px}
+.panel{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px 16px}
+.panel h2{font-size:14px; margin:0 0 10px; color:#c7d2fe; opacity:.95}
+.rounds{position:relative; background:var(--card); border:1px dashed #1c2640; border-radius:12px; padding:14px; min-height:260px; overflow:auto}
+.round-col{display:flex; flex-direction:column; gap:14px; min-width:260px; margin-right:30px; position:relative}
+.round-title{position:sticky; top:0; z-index:1; background:linear-gradient(180deg, rgba(15,23,42,.9), rgba(15,23,42,0)); padding:2px 4px; border-radius:8px; font-size:12px; color:#9fb3d7; margin:0 0 6px}
+.match{position:relative; background:#0c1426; border:1px solid var(--border); border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:8px}
+.match.done{border-color:#1f3d2d}
+.team{display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:14px}
+.team span:first-child{white-space:pre-wrap; line-height:1.1}
+.badge{display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:24px; border-radius:999px; padding:0 8px; background:var(--chip); border:1px solid var(--border); color:#e6efff; font-weight:700}
+.match.you{box-shadow:0 0 0 2px var(--accent) inset}
+.team.win .badge{background:rgba(16,185,129,.12); border-color:#136b4c; color:#86f0c9}
+.team.lose .badge{background:rgba(239,68,68,.12); border-color:#6d1b20; color:#ffb4b4}
+.team.win span:first-child{color:#9ef2d2}
+#gf .match{min-height:72px}
+
+/* conectores curvos */
+.svg-layer{position:absolute; inset:0; pointer-events:none}
+path.connector{fill:none; stroke:var(--line); stroke-width:2}
+path.connector.emph{stroke:var(--accent); stroke-opacity:.8}
+.panel.hidden{display:none}
+.next{color:#a7b8d9}
+.tooltip{font-size:12px; color:#9fb3d7}
+@media (max-width:1100px){
+  .grid{grid-template-columns:1fr}
+}

@@ -1,0 +1,7 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head> <meta charset="UTF-8"/> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <title>Torneo · Árbol</title> <link rel="stylesheet" href="/css/bracket.css?v=classic1"/> <style> body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial} </style>
+</head>
+<body class="page page-classic"> <header class="bar"> <h1>🏆 Árbol del torneo</h1> <div class="controls"> <label>ID:</label><input id="tid" placeholder="demo"/> <label>Mi equipo:</label><input id="myteam" placeholder="Viszla Phoenix"/> <label class="switch"> <input id="hlToggle" type="checkbox" checked><span>Resaltar mi camino</span> </label> <button id="load">Cargar</button> </div> </header> <!-- Bracket clásico: columnas de rondas, final al extremo derecho --> <main class="classic"> <div class="rounds" id="winners"> <svg class="svg" id="svg-winners"></svg> <!-- columnas se inyectan por JS --> </div> </main> <!-- Barra inferior: leyenda + siguiente partido --> <footer class="legendbar"> <div class="legend"> <span class="dot me"></span> Tu equipo <span class="dot win"></span> Ganó <span class="dot pend"></span> Pendiente <span class="arrow"></span> Flujo hacia la derecha </div> <div class="next"><strong>Siguiente de mi equipo:</strong> <span id="next">—</span></div> </footer> <script src="/js/bracket.js?v=classic1" defer></script>
+</body>
+</html> 
