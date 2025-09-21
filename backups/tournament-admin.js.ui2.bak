@@ -1,0 +1,101 @@
+﻿(function(){
+  const $ = s => document.querySelector(s);
+  const API = "/api/tournaments";
+  // Headers para entorno demo. En prod real, tu sesión/rol debe inyectar req.user.role="admin".
+  const ADMIN_HEADERS = { "Content-Type":"application/json", "X-Demo-Admin":"true" };
+
+  const toast = $("#toast");
+  function showToast(msg){ toast.textContent = msg; toast.style.display="block"; setTimeout(()=>toast.style.display="none", 2200); }
+  function setLoading(on){ $("#btnCreate").disabled = on; }
+
+  function fmt(d){ try{ return new Date(d).toLocaleDateString(); } catch { return d; } }
+
+  async function refresh(){
+    const r = await fetch(API);
+    const j = await r.json();
+    if(!j.ok){ $("#list").innerHTML = "<div class='err'>No se pudo cargar.</div>"; return; }
+    const data = j.data || [];
+    $("#kpi-total").textContent = data.length;
+    $("#kpi-open").textContent = data.filter(t => t.registrationOpen).length;
+    $("#kpi-last").textContent = data[0] ? fmt(data[0].createdAt || data[0].startDate) : "—";
+
+    $("#list").innerHTML = data.map(t => `
+      <div>
+        <strong>${t.name}</strong> — ${fmt(t.startDate)} → ${fmt(t.endDate)}
+        · estado: <span class="status ${t.status}">${t.status}</span>
+        ${t.registrationOpen ? " (inscripciones abiertas)" : ""}
+        · <button data-publish="${t._id}" ${t.status==="published"?"disabled":""}>Publicar</button>
+      </div>
+    `).join("") || "<div class='muted'>Sin torneos aún.</div>";
+  }
+
+  document.addEventListener("click", async (ev)=>{
+    const btn = ev.target.closest("button[data-publish]");
+    if(!btn) return;
+    const id = btn.getAttribute("data-publish");
+    btn.disabled = true;
+    try{
+      const r = await fetch(`${API}/${id}/publish`, { method:"POST", headers: ADMIN_HEADERS });
+      const j = await r.json();
+      if(!j.ok) throw new Error(j.message || "Error al publicar");
+      showToast("Torneo publicado. Inscripciones abiertas.");
+      await refresh();
+    }catch(e){
+      alert(e.message || "Error"); btn.disabled = false;
+    }
+  });
+
+  $("#btnReset").addEventListener("click", (e)=>{
+    e.preventDefault();
+    $("#tForm").reset(); $("#msg").textContent="";
+  });
+
+  $("#tForm").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    $("#msg").textContent = "Creando..."; $("#msg").className = "muted";
+    setLoading(true);
+    const body = {
+      name: $("#name").value.trim(),
+      startDate: $("#startDate").value,
+      endDate: $("#endDate").value,
+      conditions: $("#conditions").value.trim(),
+      rewards: $("#rewards").value.trim()
+    };
+
+    // Validación mínima en cliente
+    if(!body.name || !body.startDate || !body.endDate || !body.conditions || !body.rewards){
+      $("#msg").textContent = "Completa todos los campos."; $("#msg").className = "err"; setLoading(false); return;
+    }
+    if(new Date(body.endDate) <= new Date(body.startDate)){
+      $("#msg").textContent = "La fecha fin debe ser posterior a la de inicio."; $("#msg").className = "err"; setLoading(false); return;
+    }
+
+    try{
+      const r = await fetch(API, { method:"POST", headers: ADMIN_HEADERS, body: JSON.stringify(body) });
+      const j = await r.json();
+      if(!j.ok) throw new Error(j.message || "Error");
+      if ($("#publishNow").checked){
+        const r2 = await fetch(`${API}/${j.data._id}/publish`, { method:"POST", headers: ADMIN_HEADERS });
+        const j2 = await r2.json();
+        if(!j2.ok) throw new Error(j2.message || "Creado, pero error al publicar");
+        showToast("Creado y publicado.");
+      } else {
+        showToast("Torneo creado en borrador.");
+      }
+      $("#msg").textContent = "Listo"; $("#msg").className = "ok";
+      e.target.reset();
+      await refresh();
+    }catch(e){
+      $("#msg").textContent = e.message || "Error";
+      $("#msg").className = "err";
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  // Prefill: hoy/ +10 días
+  const today = new Date(); const end = new Date(today.getTime() + 9*24*60*60*1000);
+  $("#startDate").valueAsDate = today; $("#endDate").valueAsDate = end;
+
+  refresh();
+})();

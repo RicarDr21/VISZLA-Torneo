@@ -1,0 +1,68 @@
+﻿(function(){
+  const $ = (s)=>document.querySelector(s);
+  const API = "/api/tournaments";
+  const ADMIN_HEADERS = { "Content-Type":"application/json", "X-Demo-Admin":"true" };
+
+  async function refresh(){
+    try{
+      const r = await fetch(API);
+      const j = await r.json();
+      if(!j.ok) throw new Error(j.message || "No se pudo cargar");
+      $("#list").innerHTML = (j.data||[]).map(t => (
+        `<div>
+          <strong>${t.name}</strong> - ${new Date(t.startDate).toLocaleDateString()} → ${new Date(t.endDate).toLocaleDateString()}
+          · estado: <b>${t.status}</b> ${t.registrationOpen?"(inscripciones abiertas)":""}
+          · <button data-publish="${t._id}" ${t.status==="published"?"disabled":""}>Publicar</button>
+        </div>`
+      )).join("") || "<div class='muted'>Sin torneos aún.</div>";
+    }catch(e){
+      $("#list").innerHTML = `<div class="err">${e.message||"Error"}</div>`;
+    }
+  }
+
+  document.addEventListener("click", async (ev)=>{
+    const btn = ev.target.closest("button[data-publish]");
+    if(!btn) return;
+    const id = btn.getAttribute("data-publish");
+    btn.disabled = true;
+    try{
+      const r = await fetch(`${API}/${id}/publish`, { method:"POST", headers: ADMIN_HEADERS });
+      const j = await r.json();
+      if(!j.ok) throw new Error(j.message || "Error al publicar");
+      await refresh();
+    }catch(e){
+      alert(e.message||"Error");
+      btn.disabled = false;
+    }
+  });
+
+  $("#tForm").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    $("#msg").textContent = "Creando..."; $("#msg").className = "muted";
+    const body = {
+      name: $("#name").value.trim(),
+      startDate: $("#startDate").value,
+      endDate: $("#endDate").value,
+      conditions: $("#conditions").value.trim(),
+      rewards: $("#rewards").value.trim()
+    };
+    try{
+      const r = await fetch(API, { method:"POST", headers: ADMIN_HEADERS, body: JSON.stringify(body) });
+      const j = await r.json();
+      if(!j.ok) throw new Error(j.message || "Error");
+      if ($("#publishNow").checked) {
+        const r2 = await fetch(`${API}/${j.data._id}/publish`, { method:"POST", headers: ADMIN_HEADERS });
+        const j2 = await r2.json();
+        if(!j2.ok) throw new Error(j2.message || "Creado, pero error al publicar");
+      }
+      $("#msg").textContent = "Listo"; $("#msg").className = "ok";
+      e.target.reset();
+      await refresh();
+    }catch(e){
+      $("#msg").textContent = e.message || "Error";
+      $("#msg").className = "err";
+    }
+  });
+
+  refresh();
+})();

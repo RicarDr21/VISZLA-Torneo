@@ -1,0 +1,77 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Panel Admin · Torneos</title>
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/bracket.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container" style="display:flex;align-items:center;gap:12px">
+      <div class="brand">The Nexus · <span class="muted">Admin</span></div>
+      <span class="badge">US-17</span>
+      <span class="badge">Solo administradores</span>
+      <a class="badge" href="/admin?demoAdmin=true" title="Activa cookie de admin demo">modo demo</a>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="card">
+      <h1>Crear nuevo Torneo</h1>
+      <p class="muted">Máximo <b>1</b> cada <b>91 días</b>. Define <i>fechas</i>, <i>condiciones</i> y <i>recompensas</i>.</p>
+
+      <form id="tForm" class="form-grid" novalidate>
+        <div>
+          <label for="name">Nombre del torneo</label>
+          <input id="name" placeholder="The Nexus IV – Temporada" required />
+        </div>
+
+        <div class="row-2">
+          <div>
+            <label for="startDate">Fecha inicio</label>
+            <input id="startDate" type="date" required />
+          </div>
+          <div>
+            <label for="endDate">Fecha fin</label>
+            <input id="endDate" type="date" required />
+          </div>
+        </div>
+
+        <div>
+          <label for="conditions">Condiciones</label>
+          <textarea id="conditions" rows="3" placeholder="Formato, reglas, requisitos..." required></textarea>
+          <div class="help">Ej.: eliminación simple, mínimo 4 equipos, mejor de 3.</div>
+        </div>
+
+        <div>
+          <label for="rewards">Recompensas</label>
+          <textarea id="rewards" rows="3" placeholder="Premios, puntos, insignias..." required></textarea>
+        </div>
+
+        <div class="actions">
+          <label><input id="publishNow" type="checkbox" /> Publicar y abrir inscripciones</label>
+          <button type="submit" id="btnCreate" class="btn">Crear torneo</button>
+          <button type="button" id="btnReset" class="btn secondary">Limpiar</button>
+          <span id="msg" class="muted"></span>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><div class="label">Inscripciones</div><div id="kpi-open" class="value">—</div></div>
+          <div class="kpi"><div class="label">Torneos (total)</div><div id="kpi-total" class="value">—</div></div>
+          <div class="kpi"><div class="label">Próxima fecha habilitada</div><div id="kpi-next" class="value">—</div></div>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Historial de torneos</h2>
+      <div id="list" class="list"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+  <script src="/js/tournament-admin.js"></script>
+</body>
+</html>

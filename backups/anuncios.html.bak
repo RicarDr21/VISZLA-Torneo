@@ -1,0 +1,35 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Anuncios de Torneos</title>
+  <link rel="stylesheet" href="/css/admin.css"/>
+</head>
+<body>
+  <main class="main" style="max-width:800px">
+    <section class="card">
+      <h1>Anuncios de Torneos</h1>
+      <div id="list" class="list"></div>
+    </section>
+  </main>
+  <script>
+    (async()=>{
+      try{
+        const r = await fetch("/notifications.json",{cache:"no-store"});
+        const a = await r.json();
+        const list = document.getElementById("list");
+        if(!a.length){ list.innerHTML = "<div class='muted'>Aún no hay anuncios.</div>"; return; }
+        list.innerHTML = a.map(n => \`
+          <div class="item">
+            <div>
+              <div><strong>\${n.name}</strong></div>
+              <div class="meta">\${new Date(n.startDate).toLocaleDateString()} → \${new Date(n.endDate).toLocaleDateString()} · publicado el \${new Date(n.at).toLocaleDateString()}</div>
+            </div>
+          </div>\`
+        ).join("");
+      }catch(e){ document.getElementById("list").innerHTML = "<div class='muted'>No se pudieron cargar los anuncios.</div>"; }
+    })();
+  </script>
+</body>
+</html>

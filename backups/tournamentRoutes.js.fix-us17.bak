@@ -1,0 +1,23 @@
+﻿/**
+ * src/modules/tournaments/routes/tournamentRoutes.js
+ */
+const express = require("express");
+const router = express.Router();
+const tournamentController = require("../controllers/tournamentController");
+const checkAdmin = require("../../../middlewares/checkAdmin");
+
+// ===== US-17: endpoints de configuración de torneo (UI y reglas de negocio) =====
+router.get("/", tournamentController.listConfigs);                         // lista torneos (config guardada en Mongo)
+router.post("/", checkAdmin, tournamentController.createConfig);           // crear (solo ADMIN, respeta 91 días)
+router.post("/:mongoId/publish", checkAdmin, tournamentController.publishConfig); // publicar (solo ADMIN)
+
+// ===== Endpoints existentes para seed/bracket (se conservan) =====
+router.delete("/:id/seed", tournamentController.deleteSeed);
+router.post("/:id/seed", tournamentController.postSeed);
+router.get("/:id/bracket", tournamentController.getBracket);
+router.post("/:id/matches/:matchId", tournamentController.postMatch);
+
+// Depuración
+router.get("/:id/debug", tournamentController.debug);
+
+module.exports = router;

@@ -1,0 +1,113 @@
+﻿Project: VISZLA-Nexus
+[DIR] docs
+  - US13-README.md
+[DIR] src
+  [DIR] config
+    - database.js
+  [DIR] middlewares
+    [DIR] policies
+      - blacklist-es.txt
+    - checkAdmin.js
+    - uploadAvatar.js
+    - validateTeamName.js
+  [DIR] modules
+    [DIR] teams
+      [DIR] controllers
+        - TeamController.js
+      [DIR] models
+        - Team.js
+      [DIR] routes
+        - teamRoutes.js
+    [DIR] tournaments
+      [DIR] controllers
+        - BracketController.js
+        - TournamentController.js
+      [DIR] models
+        - BracketStore.js
+        - Tournament.js
+      [DIR] routes
+        - bracketRoutes.js
+        - tournamentRoutes.js
+      [DIR] store
+        - TournamentStore.js
+      - store.js
+  [DIR] public
+    [DIR] css
+      - bracket.backup.classic.css
+      - bracket.backup.explain.css
+      - bracket.backup.kids.css
+      - bracket.backup.restore.css
+      - bracket.backup.spacingTheme.css
+      - bracket.backup.themes_arrows.css
+      - bracket.backup.v2.css
+      - bracket.css
+    [DIR] js
+      - bracket.backup.arrowsfix.js
+      - bracket.backup.brace_arrows.js
+      - bracket.backup.classic.js
+      - bracket.backup.explain.js
+      - bracket.backup.highlight_fix.js
+      - bracket.backup.js
+      - bracket.backup.kids.js
+      - bracket.backup.overwrite_arrows.js
+      - bracket.backup.restore.js
+      - bracket.backup.restore_before_noHL.js
+      - bracket.backup.theme.js
+      - bracket.backup.themes_arrows.js
+      - bracket.backup.ui.js
+      - bracket.backup.v2.js
+      - bracket.backup2.js
+      - bracket.fix.classic.js
+      - bracket.js
+      - team.js
+      - tournament-admin.js
+    [DIR] pages
+      - bracket.backup.classic.html
+      - bracket.backup.html
+      - bracket.backup.kids.html
+      - bracket.backup.restore.html
+      - bracket.backup.spacingTheme.html
+      - bracket.backup.v2.html
+      - bracket.html
+      - team.html
+      - team.html.bak
+      - tournament-admin.html
+    [DIR] uploads
+      - .gitkeep
+      - 1758327350002-test.png
+      - 1758327358171-test.png
+      - 1758327729452-test.png
+      - 1758327733863-test.png
+      - 1758344814242-test.png
+      - 1758344819784-test.png
+      - 1758344826959-test.png
+      - 1758344898788-test.png
+      - 1758344946997-test.png
+      - 1758344947037-test.png
+      - 1758344947053-test.png
+      - 1758344947067-test.png
+      - 1758345109323-test.png
+      - 1758345109362-test.png
+      - 1758345109374-test.png
+      - 1758345109399-test.png
+      - 1758347680618-ChatGPT_Image_20_sept_2025,_12_53_39_a.m..png
+      - 1758347707748-ChatGPT_Image_20_sept_2025,_12_53_39_a.m..png
+    [DIR] uploads_test
+  - app.backup.js
+  - app.js
+  - server.js
+[DIR] tests
+  [DIR] fixtures
+    - test.png
+  - health.test.js
+  - teams.test.js
+- .env
+- .env.example
+- .gitignore
+- nodemon.json
+- package.json
+- package-lock.json
+- project-structure.txt
+- README.md
+- seed-demo.json
+- test.png

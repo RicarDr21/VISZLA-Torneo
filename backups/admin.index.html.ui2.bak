@@ -1,0 +1,98 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Panel Admin · Torneos</title>
+  <link rel="stylesheet" href="/css/bracket.css" />
+  <style>
+    :root{ --bg:#0b0f19; --card:#111827; --text:#e5e7eb; --muted:#9ca3af; --accent:#2563eb; --ok:#10b981; --err:#ef4444; --line:#334155; }
+    *{ box-sizing:border-box }
+    body{ margin:0; background:var(--bg); color:var(--text); font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif }
+    header{ position:sticky; top:0; z-index:10; backdrop-filter:saturate(1.2) blur(4px); background:rgba(11,15,25,.7); border-bottom:1px solid #1f2937; }
+    .bar{ max-width:1100px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; gap:12px }
+    .badge{ font-size:12px; padding:4px 8px; border:1px solid #1f2937; border-radius:999px; color:var(--muted) }
+    main{ max-width:1100px; margin:24px auto; padding:0 20px; display:grid; grid-template-columns:1fr; gap:16px }
+    .card{ background:var(--card); border:1px solid #1f2937; border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.35) }
+    h1{ margin:0 0 6px; font-size:28px }
+    p.muted{ margin:0 0 16px; color:var(--muted) }
+    label{ display:block; margin:10px 0 6px; font-weight:600 }
+    input, textarea{ width:100%; background:#0f172a; color:var(--text); border:1px solid #374151; border-radius:10px; padding:12px }
+    input[type="date"]{ padding-right:8px }
+    .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px }
+    .actions{ display:flex; gap:10px; align-items:center }
+    button{ padding:12px 16px; border:0; border-radius:10px; background:var(--accent); color:white; cursor:pointer }
+    button.secondary{ background:#334155 }
+    button[disabled]{ opacity:.6; cursor:not-allowed }
+    .toast{ position:fixed; right:20px; bottom:20px; background:#0f172a; color:var(--text); border:1px solid #374151; padding:12px 14px; border-radius:10px; display:none; }
+    .list > div{ padding:10px 0; border-bottom:1px dashed var(--line) }
+    .kpi{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:8px }
+    .kpi .card{ padding:12px }
+    .kpi .value{ font-size:22px; font-weight:700 }
+    .status{ font-weight:700 }
+    .status.published{ color:var(--ok) }
+    .status.draft{ color:#eab308 }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div style="font-weight:800; letter-spacing:.3px">The Nexus · <span class="muted">Admin</span></div>
+      <div class="badge">US-17: Crear nuevo Torneo</div>
+      <div class="badge">Solo administradores</div>
+      <a class="badge" href="/admin?demoAdmin=true" title="Activar cookie admin de demo">modo demo admin</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h1>Crear nuevo Torneo</h1>
+      <p class="muted">Máximo <b>1</b> cada <b>91 días</b> · Define <i>fechas</i>, <i>condiciones</i> y <i>recompensas</i>.</p>
+
+      <form id="tForm">
+        <label>Nombre del torneo</label>
+        <input id="name" placeholder="The Nexus IV – Temporada" required />
+
+        <div class="row">
+          <div>
+            <label>Fecha inicio</label>
+            <input id="startDate" type="date" required />
+          </div>
+          <div>
+            <label>Fecha fin</label>
+            <input id="endDate" type="date" required />
+          </div>
+        </div>
+
+        <label>Condiciones</label>
+        <textarea id="conditions" rows="3" required placeholder="Formato, reglas, requisitos..."></textarea>
+
+        <label>Recompensas</label>
+        <textarea id="rewards" rows="3" required placeholder="Premios, puntos, insignias..."></textarea>
+
+        <div class="actions">
+          <label><input id="publishNow" type="checkbox" /> Publicar e iniciar inscripciones al crear</label>
+          <button type="submit" id="btnCreate">Crear torneo</button>
+          <button type="button" id="btnReset" class="secondary">Limpiar</button>
+          <span id="msg" class="muted"></span>
+        </div>
+      </form>
+
+      <div class="kpi">
+        <div class="card"><div class="muted">Inscripciones</div><div id="kpi-open" class="value">—</div></div>
+        <div class="card"><div class="muted">Torneos (total)</div><div id="kpi-total" class="value">—</div></div>
+        <div class="card"><div class="muted">Último creado</div><div id="kpi-last" class="value">—</div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin:0 0 8px">Historial</h2>
+      <div id="list" class="list"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="/js/tournament-admin.js"></script>
+</body>
+</html>

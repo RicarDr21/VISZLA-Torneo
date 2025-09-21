@@ -1,0 +1,16 @@
+﻿/**
+ * src/middlewares/checkAdmin.js
+ * Middleware simple de ADMIN para local/prod.
+ * - Local: permite si viene header X-Demo-Admin: true
+ * - Prod: permite si req.user.role === "admin"
+ */
+module.exports = function checkAdmin(req, res, next) {
+  const isAdmin =
+    (req.user && req.user.role === 'admin') ||
+    req.get('X-Demo-Admin') === 'true';
+
+  if (!isAdmin) {
+    return res.status(403).json({ ok:false, message:'Acceso restringido a administradores.' });
+  }
+  next();
+};

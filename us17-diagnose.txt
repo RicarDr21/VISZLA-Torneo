@@ -1,0 +1,274 @@
+﻿===== PROJECT PATH =====
+C:\Users\David Hernández\Desktop\VISZLA-Nexus
+
+===== BEGIN src\middlewares\checkAdmin.js =====
+
+===== END src\middlewares\checkAdmin.js =====
+
+===== MISSING src\middlewares\policies\checkAdmin.js =====
+
+===== BEGIN src\modules\tournaments\routes\tournamentRoutes.js =====
+/**
+ * src/modules/tournaments/routes/tournamentRoutes.js
+ */
+const express = require("express");
+const router = express.Router();
+const tournamentController = require("../controllers/tournamentController");
+
+// Cargamos la policy (puede exportar función u objeto)
+const adminPolicy = require("../../../middlewares/checkAdmin");
+
+// Función fallback (solo para desarrollo) si no encontramos un middleware válido
+function __allowAll(req, res, next) {
+  console.warn("[US-17] WARNING: checkAdmin export no es una función. Permitiendo acceso temporalmente en local.");
+  next();
+}
+
+// Normalizamos a función-middleware
+const ensureAdmin =
+  (typeof adminPolicy === "function" && adminPolicy) ||
+  adminPolicy?.checkAdmin ||
+  adminPolicy?.onlyAdmin ||
+  adminPolicy?.default ||
+  __allowAll;
+
+// ===== US-17: endpoints de configuración de torneo =====
+router.get("/", tournamentController.listConfigs);
+router.post("/", ensureAdmin, tournamentController.createConfig);
+router.post("/:mongoId/publish", ensureAdmin, tournamentController.publishConfig);
+
+// ===== Endpoints existentes para seed/bracket =====
+router.delete("/:id/seed", tournamentController.deleteSeed);
+router.post("/:id/seed", tournamentController.postSeed);
+router.get("/:id/bracket", tournamentController.getBracket);
+router.post("/:id/matches/:matchId", tournamentController.postMatch);
+
+// Depuración
+router.get("/:id/debug", tournamentController.debug);
+
+module.exports = router;
+
+
+===== END src\modules\tournaments\routes\tournamentRoutes.js =====
+
+===== BEGIN src\modules\tournaments\controllers\TournamentController.js =====
+/**
+ * src/modules/tournaments/controllers/tournamentController.js
+ */
+const { TournamentStore, setScoreAndPropagate, toFinalShape } = require("../store/TournamentStore");
+const store = TournamentStore.getInstance();
+
+exports.deleteSeed = (req, res) => {
+  const { id } = req.params;
+  store.delete(id);
+  return res.status(200).json({ ok: true, id });
+};
+
+exports.postSeed = (req, res) => {
+  const { id } = req.params;
+  const { name = id, type = "single", shuffle = false, teams = [] } = req.body || {};
+
+  if (type !== "single") {
+    return res.status(400).json({ error: "Solo se soporta type: 'single' por ahora." });
+  }
+  if (!Array.isArray(teams) || teams.length < 2) {
+    return res.status(400).json({ error: "teams debe ser un arreglo con al menos 2 nombres." });
+  }
+
+  const payload = store.buildSingleElimination(id, name, teams, { shuffle });
+  return res.status(201).json({ ok: true, id, name: payload.name, type: payload.type, teams: payload.teams, pid: process.pid });
+};
+
+exports.getBracket = (req, res) => {
+  const { id } = req.params;
+  const t = store.get(id);
+  if (!t) return res.status(404).json({ error: "Torneo no encontrado", pid: process.pid, keys: Array.from(store.tournaments.keys()) });
+
+  const final = toFinalShape(t.winners[t.winners.length - 1][0]);
+  return res.status(200).json({
+    winners: t.winners,
+    final,
+    pid: process.pid
+  });
+};
+
+exports.postMatch = (req, res) => {
+  const { id, matchId } = req.params;
+  const { scoreA, scoreB } = req.body || {};
+  const t = store.get(id);
+  if (!t) return res.status(404).json({ error: "Torneo no encontrado" });
+
+  const ok = setScoreAndPropagate(t.winners, matchId, Number(scoreA), Number(scoreB));
+  if (!ok) return res.status(404).json({ error: "Match no encontrado" });
+
+  // Persistir
+  store.upsert(id, t);
+
+  const final = toFinalShape(t.winners[t.winners.length - 1][0]);
+  return res.status(200).json({
+    ok: true,
+    winners: t.winners,
+    final,
+  });
+};
+
+// DEBUG
+exports.debug = (req, res) => {
+  const keys = Array.from(store.tournaments.keys());
+  const t = store.get(req.params.id);
+  res.status(200).json({
+    pid: process.pid,
+    keys,
+    hasId: store.tournaments.has(req.params.id),
+    snapshot: t ? { id: t.id, name: t.name, type: t.type, teams: t.teams.length, rounds: t.winners.length } : null
+  });
+};
+/** ===== US-17: creación/publicación y listado de torneos (config en Mongo) ===== */
+const Tournament = require("../models/Tournament");
+
+async function _canCreateTournamentConfig() {
+  const last = await Tournament.findOne({}).sort({ createdAt: -1 }).lean();
+  if (!last) return { allowed: true, nextDate: null };
+  const diffDays = (Date.now() - new Date(last.createdAt).getTime()) / (1000*60*60*24);
+  const nextDate = new Date(new Date(last.createdAt).getTime() + 91*24*60*60*1000);
+  return { allowed: diffDays >= 91, nextDate };
+}
+
+exports.listConfigs = async (_req, res) => {
+  try {
+    const list = await Tournament.find({}).sort({ createdAt: -1 }).lean();
+    res.json({ ok: true, data: list });
+  } catch (e) {
+    res.status(500).json({ ok: false, message: e.message });
+  }
+};
+
+exports.createConfig = async (req, res) => {
+  try {
+    const { allowed, nextDate } = await _canCreateTournamentConfig();
+    if (!allowed) {
+      return res.status(409).json({
+        ok: false,
+        message: `No se puede crear un nuevo torneo aún. Intente después de ${nextDate.toISOString().slice(0,10)} (regla 91 días).`
+      });
+    }
+
+    const { name, startDate, endDate, conditions, rewards } = req.body || {};
+    if (!name || !startDate || !endDate || !conditions || !rewards) {
+      return res.status(400).json({ ok:false, message:"Faltan campos: name, startDate, endDate, conditions, rewards." });
+    }
+    const s = new Date(startDate), e = new Date(endDate);
+    if (isNaN(s) || isNaN(e) || e <= s) {
+      return res.status(400).json({ ok:false, message:"Rango de fechas inválido: endDate > startDate." });
+    }
+
+    const createdBy = (req.user && req.user.id) || "admin-demo";
+    const doc = await Tournament.create({
+      name: String(name).trim(),
+      startDate: s, endDate: e,
+      conditions: String(conditions).trim(),
+      rewards: String(rewards).trim(),
+      createdBy,
+      status: "draft",
+      registrationOpen: false
+    });
+
+    res.status(201).json({ ok:true, data: doc });
+  } catch (e) {
+    res.status(400).json({ ok:false, message: e.message });
+  }
+};
+
+exports.publishConfig = async (req, res) => {
+  try {
+    const { mongoId } = req.params;
+    const doc = await Tournament.findById(mongoId);
+    if (!doc) return res.status(404).json({ ok:false, message:"Torneo no encontrado." });
+
+    if (doc.status !== "published") {
+      doc.status = "published";
+      doc.registrationOpen = true;
+      await doc.save();
+      // Aquí engancharías notificaciones reales si tienes módulo/cola/correo:
+      console.log(`[NOTIFY] Torneo "${doc.name}" publicado → inscripciones abiertas`);
+    }
+    res.json({ ok:true, data: doc });
+  } catch (e) {
+    res.status(400).json({ ok:false, message: e.message });
+  }
+};
+
+
+===== END src\modules\tournaments\controllers\TournamentController.js =====
+
+===== BEGIN src\modules\tournaments\models\Tournament.js =====
+const mongoose = require("mongoose");
+
+const TournamentSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
+  conditions: { type: String, required: true },
+  rewards: { type: String, required: true },
+  createdBy: { type: String, required: true },
+  createdAt: { type: Date, default: () => new Date(), index: true },
+  registrationOpen: { type: Boolean, default: false },
+  status: { type: String, enum: ["draft", "published", "closed"], default: "draft" }
+}, { versionKey: false });
+
+module.exports = mongoose.model("Tournament", TournamentSchema);
+
+
+===== END src\modules\tournaments\models\Tournament.js =====
+
+===== NODE EXPORT CHECK (checkAdmin) =====
+\n-- ./src/middlewares/checkAdmin.js --
+{
+  exists: true,
+  type: 'object',
+  keys: [],
+  isFunction: false,
+  hasCheckAdmin: false,
+  hasDefault: false
+}
+\n-- ./src/middlewares/policies/checkAdmin.js --
+{
+  exists: false,
+  error: "Cannot find module './src/middlewares/policies/checkAdmin.js'\n" +
+    'Require stack:\n' +
+    '- C:\\Users\\David Hern├índez\\Desktop\\VISZLA-Nexus\\us17-check-admin-export.js'
+}
+
+===== HTTP GET /api/tournaments =====
+{"ok":true,"data":[]}
+
+===== HTTP POST /api/tournaments (SIN admin header) =====
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>SyntaxError: Expected property name or &#39;}&#39; in JSON at position 1 (line 1 column 2)<br> &nbsp; &nbsp;at JSON.parse (&lt;anonymous&gt;)<br> &nbsp; &nbsp;at parse (C:\Users\David Hern├índez\Desktop\VISZLA-Nexus\node_modules\body-parser\lib\types\json.js:92:19)<br> &nbsp; &nbsp;at C:\Users\David Hern├índez\Desktop\VISZLA-Nexus\node_modules\body-parser\lib\read.js:128:18<br> &nbsp; &nbsp;at AsyncResource.runInAsyncScope (node:async_hooks:211:14)<br> &nbsp; &nbsp;at invokeCallback (C:\Users\David Hern├índez\Desktop\VISZLA-Nexus\node_modules\raw-body\index.js:238:16)<br> &nbsp; &nbsp;at done (C:\Users\David Hern├índez\Desktop\VISZLA-Nexus\node_modules\raw-body\index.js:227:7)<br> &nbsp; &nbsp;at IncomingMessage.onEnd (C:\Users\David Hern├índez\Desktop\VISZLA-Nexus\node_modules\raw-body\index.js:287:7)<br> &nbsp; &nbsp;at IncomingMessage.emit (node:events:518:28)<br> &nbsp; &nbsp;at endReadableNT (node:internal/streams/readable:1698:12)<br> &nbsp; &nbsp;at process.processTicksAndRejections (node:internal/process/task_queues:90:21)</pre>
+</body>
+</html>
+
+===== HTTP POST /api/tournaments (CON admin header X-Demo-Admin:true) =====
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>SyntaxError: Expected property name or &#39;}&#39; in JSON at position 1 (line 1 column 2)<br> &nbsp; &nbsp;at JSON.parse (&lt;anonymous&gt;)<br> &nbsp; &nbsp;at parse (C:\Users\David Hern├índez\Desktop\VISZLA-Nexus\node_modules\body-parser\lib\types\json.js:92:19)<br> &nbsp; &nbsp;at C:\Users\David Hern├índez\Desktop\VISZLA-Nexus\node_modules\body-parser\lib\read.js:128:18<br> &nbsp; &nbsp;at AsyncResource.runInAsyncScope (node:async_hooks:211:14)<br> &nbsp; &nbsp;at invokeCallback (C:\Users\David Hern├índez\Desktop\VISZLA-Nexus\node_modules\raw-body\index.js:238:16)<br> &nbsp; &nbsp;at done (C:\Users\David Hern├índez\Desktop\VISZLA-Nexus\node_modules\raw-body\index.js:227:7)<br> &nbsp; &nbsp;at IncomingMessage.onEnd (C:\Users\David Hern├índez\Desktop\VISZLA-Nexus\node_modules\raw-body\index.js:287:7)<br> &nbsp; &nbsp;at IncomingMessage.emit (node:events:518:28)<br> &nbsp; &nbsp;at endReadableNT (node:internal/streams/readable:1698:12)<br> &nbsp; &nbsp;at process.processTicksAndRejections (node:internal/process/task_queues:90:21)</pre>
+</body>
+</html>
+
+===== LAST WRITE TIMES (UTC) =====
+src\middlewares\checkAdmin.js  ->  2025-09-19 23:30:42Z
+src\modules\tournaments\routes\tournamentRoutes.js  ->  2025-09-21 04:59:16Z
+src\modules\tournaments\controllers\TournamentController.js  ->  2025-09-21 04:57:30Z
+src\modules\tournaments\models\Tournament.js  ->  2025-09-21 04:57:28Z
+

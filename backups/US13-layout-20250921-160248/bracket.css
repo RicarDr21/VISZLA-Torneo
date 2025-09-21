@@ -1,0 +1,84 @@
+﻿:root{
+  --bg:#0b1320; --card:#0f1b2d; --text:#e8eef9;
+  --green:#77c37a; --purple:#b48ef7; --line:#7aa0ff; --sep:#e05555;
+}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#0d1627;position:sticky;top:0}
+.pill{background:#13233a;border:1px solid #1d3355;padding:8px 12px;border-radius:12px;font-weight:600}
+.tools{display:flex;gap:8px;align-items:center}
+.tools input{background:#0c1526;border:1px solid #263b5e;color:var(--text);padding:6px 8px;border-radius:6px;width:120px}
+.tools button{background:#2e64f2;border:0;color:white;padding:6px 10px;border-radius:8px;cursor:pointer}
+.wrap{padding:18px}
+.legend{opacity:.85;margin:6px 0 10px;display:flex;align-items:center;gap:14px}
+.legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+.legend .win{background:var(--green)} .legend .lose{background:var(--purple)} .legend .sep{opacity:.6}
+
+svg{width:100%;height:78vh;background:linear-gradient(180deg,#0f1b2d 0 50%, #0f1b2d 50% 100%)}
+.sepLine{stroke:var(--sep);stroke-width:3}
+.link{stroke:var(--line);stroke-width:2;fill:none;opacity:.9}
+.match rect{rx:8;ry:8}
+.nodeLabel{font-weight:700}
+.boxW{fill:#c8f3ca;stroke:#86d88b;stroke-width:1.2}
+.boxL{fill:#e7d7ff;stroke:#c7aefb;stroke-width:1.2}
+.small{font-size:11px;fill:#2c3a53}
+
+.match:hover{filter:brightness(1.02);cursor:pointer}
+.editor{background:#0f1b2d;border:1px solid #274369;border-radius:10px;padding:6px}
+.editor .row{display:flex;gap:6px;margin-bottom:6px}
+.editor input{width:100%;background:#0a1527;border:1px solid #35507a;color:#eaf2ff;padding:4px;border-radius:6px}
+.editor .save{width:100%;background:#2e64f2;border:0;color:white;padding:4px;border-radius:6px;cursor:pointer}
+/* Finales como bloques */
+.final-badge{
+  display:inline-block;
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid #2b3b4f;
+  background: #0e1723;
+  color:#dbe7ff;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.03) inset, 0 4px 12px rgba(0,0,0,0.24);
+  min-width: 120px;
+  text-align: left;
+  font-weight: 600;
+}
+.final-badge small{ display:block; opacity:.7; font-weight:400; }
+
+/* US-13: tarjetas de final + conector */
+.final-card{
+  background: rgba(205,230,195,.9);
+  color: #0b1219;
+  border-radius: 12px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 6px 18px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.06);
+  backdrop-filter: blur(2px);
+}
+.final-card .fc-title{ font-weight: 700; font-size: 14px; line-height: 1; }
+.final-card .fc-sub  { opacity: .7;   font-size: 12px; line-height: 1.1; margin-top: 4px; }
+
+/* US-13: tarjetas de final + conector (z-index alto) */
+.final-card{
+  background: rgba(205,230,195,.95);
+  color: #0b1219;
+  border-radius: 12px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 6px 18px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.06);
+  backdrop-filter: blur(2px);
+  z-index: 60;
+}
+.final-card .fc-title{ font-weight: 700; font-size: 14px; line-height: 1; }
+.final-card .fc-sub  { opacity: .7;   font-size: 12px; line-height: 1.1; margin-top: 4px; }
+
+/* === US-13 finales GE11/GE13 anclados al contenedor === */
+.final-layer{ z-index: 60; }
+.final-card{
+  background: rgba(205,230,195,.95);
+  color: #0b1219;
+  border-radius: 12px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 6px 18px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.06);
+  backdrop-filter: blur(2px);
+}
+.final-card .fc-title{ font-weight: 700; font-size: 14px; line-height: 1; }
+.final-card .fc-sub  { opacity: .7; font-size: 12px; line-height: 1.1; margin-top: 4px; }
