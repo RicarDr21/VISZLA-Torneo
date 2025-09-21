@@ -11,3 +11,8 @@ src/public/uploads/
 coverage/
 dist/
 .DS_Store
+# Local dev artifacts
+project-structure.txt
+us17-*.txt
+backups/
+src/public/notifications.json
