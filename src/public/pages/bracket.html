@@ -3,5 +3,7 @@
 <head> <meta charset="utf-8"/> <meta name="viewport" content="width=device-width,initial-scale=1"/> <title>Árbol del torneo</title> <link rel="stylesheet" href="/css/bracket.css"/>
 </head>
 <body> <header class="topbar"> <h1>🏆 Árbol del torneo</h1> <div class="controls"> <label>ID: <input id="tid" placeholder="demo"/></label> <label>Mi equipo: <input id="myteam" placeholder="Koalas"/></label> <button id="load" type="button">Cargar</button> </div> </header> <main id="bracket" class="bracket-wrap"> <svg id="br-arrows"></svg> <div class="bracket-grid"> <section class="round" aria-label="Cuartos"> <h3>Cuartos</h3> <div id="col-q" class="col"></div> </section> <section class="round" aria-label="Semifinales"> <h3>Semifinales</h3> <div id="col-sf" class="col"></div> </section> <section class="round final" aria-label="Final"> <h3>Final</h3> <div id="col-f" class="col"></div> </section> </div> </main> <footer class="legend"> <span><i class="dot dot-you"></i>Tu equipo</span> <span><i class="dot dot-win"></i>Ganó</span> <span><i class="dot dot-pending"></i>Pendiente</span> <span class="flow">→ Flujo hacia la derecha</span> <span class="next" id="next-match">Siguiente de mi equipo: —</span> </footer> <script src="/js/bracket.js"></script>
+  <script src="/js/notify-banner.js"></script>
 </body>
 </html> 
+

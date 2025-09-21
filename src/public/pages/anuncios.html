@@ -1,0 +1,56 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Anuncios de Torneos</title>
+  <link rel="stylesheet" href="/css/admin.css"/>
+</head>
+<body>
+  <main class="main" style="max-width:900px">
+    <section class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <h1 style="margin:0">Anuncios de Torneos <span id="count" class="muted"></span></h1>
+        <button id="refresh" class="btn secondary">Actualizar</button>
+      </div>
+      <div id="list" class="list" style="margin-top:10px"></div>
+    </section>
+  </main>
+
+  <script>
+    const fmt = d => new Intl.DateTimeFormat("es-ES",{day:"2-digit",month:"2-digit",year:"numeric"}).format(new Date(d));
+    async function load(){
+      const list = document.getElementById("list");
+      const count = document.getElementById("count");
+      list.innerHTML = "<div class='muted'>Cargando…</div>";
+      try{
+        const r = await fetch("/notifications.json", { cache:"no-store" });
+        if(!r.ok) throw new Error("HTTP "+r.status);
+        const a = await r.json();
+        count.textContent = a.length ? `(${a.length})` : "";
+        if(!Array.isArray(a) || a.length===0){
+          list.innerHTML = "<div class='muted'>Aún no hay anuncios.</div>";
+          return;
+        }
+        list.innerHTML = a.map(n => `
+          <div class="item">
+            <div>
+              <div><strong>${n.name}</strong></div>
+              <div class="meta">
+                ${fmt(n.startDate)} → ${fmt(n.endDate)}
+                · publicado el ${fmt(n.at)}
+              </div>
+            </div>
+            <span class="pill published">Publicado</span>
+          </div>
+        `).join("");
+      }catch(e){
+        console.error(e);
+        list.innerHTML = "<div class='muted'>No se pudieron cargar los anuncios.</div>";
+      }
+    }
+    document.getElementById("refresh").addEventListener("click", load);
+    if (document.readyState==="loading") document.addEventListener("DOMContentLoaded", load); else load();
+  </script>
+</body>
+</html>
